@@ -22,13 +22,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: copy file via ssh password
-        uses: appleboy/scp-action@v0.1.4
+      - name: Deploy
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SCP_HOST }}
           username: ${{ secrets.SCP_USERNAME }}
           password: ${{ secrets.SCP_PASSWORD }}
           port: ${{ secrets.SCP_PORT }}
-          source: ./*
-          target: ${{ vars.SCP_DST }}
-          overwrite: true
+          script: |
+            cd ${{ vars.SCP_DST }}
+            git pull

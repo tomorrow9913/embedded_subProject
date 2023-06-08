@@ -43,6 +43,6 @@ jobs:
           port: ${{ secrets.SCP_PORT }}
           script: |
             cd ${{vars.SCP_DST}}
-            python 11_2DNN_1.py
+            python3 11_2DNN_1.py
 
       

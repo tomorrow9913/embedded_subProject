@@ -20,7 +20,7 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      run: ${{ steps.changed-files.outputs.all_changed_files }}
+      run: echo ${{ steps.changed-files.outputs.all_changed_files }}
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 

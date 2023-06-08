@@ -161,7 +161,7 @@ def myPCA(image_files, size, rate):
 
 
 def main():
-    count = 244   # 학습 영상의 갯수를 나타내는 변수
+    count = 40   # 학습 영상의 갯수를 나타내는 변수
     width = 120         # 영상의 가로 사이즈를 결정하는 변수
     height = 150        # 영상의 세로 사이즈를 결정하는 변수
     rate = 0.95         # 주성분의 갯수를 결정할 때 선택 비율을 결정하는 변수

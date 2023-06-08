@@ -44,5 +44,3 @@ jobs:
           script: |
             cd ${{vars.SCP_DST}}
             python3 11_2DNN_1.py
-
-      

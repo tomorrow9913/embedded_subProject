@@ -29,7 +29,7 @@ jobs:
           username: ${{ secrets.SCP_USERNAME }}
           password: ${{ secrets.SCP_PASSWORD }}
           port: ${{ secrets.SCP_PORT }}
-          source: ./*
+          source: /*
           target: ${{ vars.SCP_DST }}
           overwrite: true
 

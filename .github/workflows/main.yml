@@ -20,6 +20,19 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      - uses: actions/checkout@v3
+
+      - name: copy file via ssh password
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.SCP_HOST }}
+          username: ${{ secrets.SCP_USERNAME }}
+          password: ${{ secrets.SCP_PASSWORD }}
+          port: ${{ secrets.SCP_PORT }}
+          source: ./*
+          target: ${{ vars.SCP_DST }}
+          overwrite: true
+
       # Runs a single command using the runners shell
       - name: restart Face Project
         uses: appleboy/ssh-action@master
@@ -30,7 +43,6 @@ jobs:
           port: ${{ secrets.SCP_PORT }}
           script: |
             cd ${{vars.SCP_DST}}
-            git pull
             python 11_2DNN_1.py
 
       

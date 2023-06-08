@@ -4,6 +4,8 @@ import time
 import numpy as np
 import tkinter as tk
 from PIL import Image, ImageTk
+from myPCA import *
+
 
 DATA_PATH = 'SSD_data'
 IMG_PATH = 'images'
@@ -77,8 +79,8 @@ class FaceCaptureFrame(tk.Frame):
         self.camera.release()
 
     def draw(self):
-        self.camera.set(3, 100)
-        self.camera.set(4, 100)
+        # self.camera.set(3, 100)
+        # self.camera.set(4, 100)
 
         self.label = tk.Label(self, text="Capture the face!")
         self.label.grid(column=0, row=0, columnspan=2)
@@ -96,7 +98,7 @@ class FaceCaptureFrame(tk.Frame):
 
         if not ret:
             return
-
+        frame = cv2.resize(frame, (700, 500))
         frame = cv2.flip(frame, 1)
         return frame
 
@@ -127,12 +129,39 @@ class FaceCaptureFrame(tk.Frame):
             self.label.config(text=messages)
             self.label.text = messages
 
-            cv2.imwrite(filename, image)
-
+            check(cv2.resize(cv2.cvtColor(image, cv2.COLOR_RGB2GRAY), (120, 150)))
+            # cv2.imwrite(filename, image)
+            
         self.temp = True
         self.after(1000, lambda: setattr(self, 'temp', False))
         # self.pack_forget()
         # self.after(1000, self.pack)
+
+def check(test_image):
+    test_image = np.array(test_image, np.float32)
+    image = test_image - average
+    image = image.reshape(18000, 1)
+    image_value = transform.T @ image
+
+    min_array = 0
+    min_number = 0
+
+    for i in range(count):
+        arr = pca_array[:, i].reshape(index, 1)
+        sum = 0
+
+        for j in range(index):
+            sum += (image_value[j, 0] - arr[j, 0]) ** 2
+
+        sum **= 1 / 2
+
+        if i == 0 or min_array > sum:
+            min_array = sum
+            min_number = i
+
+    print(f"{min_number} {min_array}")
+
+    
 
 def gui():
     window = tk.Tk()
@@ -159,4 +188,28 @@ def main():
 
 
 if __name__ == '__main__':
+    average = cv2.imread("./train_file/average.jpg", cv2.IMREAD_GRAYSCALE)
+    difference = cv2.imread("./train_file/difference.jpg", cv2.IMREAD_GRAYSCALE)
+
+    with open("./train_file/index.txt", "r") as f:
+        index, count = tuple(map(int, f.read().split(',')))
+
+    transform = np.load("./train_file/transform.npy")
+    pca_array = np.load("./train_file/pca_array.npy")
+
+    
+    print('average')
+    print(average)
+    print('difference')
+    print(difference)
+    print('index')
+    print(index)
+    print('count')
+    print(count)
+    print('transform')
+    print(transform)
+    print('pca_array')
+    print(pca_array)
+
     gui()
+    

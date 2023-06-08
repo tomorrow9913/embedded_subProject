@@ -42,7 +42,7 @@ jobs:
           password: ${{ secrets.SCP_PASSWORD }}
           port: ${{ secrets.SCP_PORT }}
           script: |
-            cd ${{vars.SCP_DST}}/embedded_subProject
+            cd ${{vars.SCP_DST}}
             python 11_2DNN_1.py
 
       

@@ -30,7 +30,19 @@ jobs:
           password: ${{ secrets.SCP_PASSWORD }}
           port: ${{ secrets.SCP_PORT }}
           source: ${{ steps.changed-files.outputs.all_changed_files }}
-          target: ${{ vars.SCP_DST}}
+          target: ${{ vars.SCP_DST }}
           overwrite: true
+
+      # Runs a single command using the runners shell
+      - name: restart Face Project
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SCP_HOST }}
+          username: ${{ secrets.SCP_USERNAME }}
+          password: ${{ secrets.SCP_PASSWORD }}
+          port: ${{ secrets.SCP_PORT }}
+          script: |
+            cd ${{vars.SCP_DST}}/embedded_subProject
+            python 11_2DNN_1.py
 
       

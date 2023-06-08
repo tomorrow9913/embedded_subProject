@@ -20,10 +20,6 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: print steps.changed-files
-        run: echo ${{ steps.changed-files.outputs.all_changed_files }}
-      
-
       - uses: actions/checkout@v3
 
       - name: copy file via ssh password
@@ -33,7 +29,7 @@ jobs:
           username: ${{ secrets.SCP_USERNAME }}
           password: ${{ secrets.SCP_PASSWORD }}
           port: ${{ secrets.SCP_PORT }}
-          source: ${{ steps.changed-files.outputs.all_changed_files }}
+          source: ./*
           target: ${{ vars.SCP_DST }}
           overwrite: true
 

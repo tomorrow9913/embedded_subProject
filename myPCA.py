@@ -161,6 +161,7 @@ def myPCA(image_files, size, rate):
 
 
 def main():
+    num = 10
     count = 40   # 학습 영상의 갯수를 나타내는 변수
     width = 120         # 영상의 가로 사이즈를 결정하는 변수
     height = 150        # 영상의 세로 사이즈를 결정하는 변수
@@ -169,24 +170,25 @@ def main():
 
     # 학습파일을 저장하는 리스트 생성
     files = []
-    
+
     for i in range(count):
 
         image = cv2.imread(f"./train_img/{i:03d}.jpg", cv2.IMREAD_GRAYSCALE)
         image = cv2.resize(image, (width, height))
         files.append(image)
 
-    average, difference, index, transform, pca_array = myPCA(files, size, rate)
+    for i in range(4):
+        average, difference, index, transform, pca_array = myPCA(files[i * num : (i + 1) * num], size, rate)
 
-    cv2.imwrite("./train_file/average.jpg", average)
-    cv2.imwrite("./train_file/difference.jpg", difference)
+        cv2.imwrite(f"./train_file/average{i}.jpg", average)
+        cv2.imwrite(f"./train_file/difference{i}.jpg", difference)
 
-    f = open("./train_file/index.txt", 'w')
-    f.write(f"{index},{count}")
-    f.close()
-    
-    np.save("./train_file/transform", transform)
-    np.save("./train_file/pca_array", pca_array)
+        f = open(f"./train_file/index{i}.txt", 'w')
+        f.write(f"{index},{i * 10}")
+        f.close()
+
+        np.save(f"./train_file/transform{i}", transform)
+        np.save(f"./train_file/pca_array{i}", pca_array)
 
 
 if __name__ == '__main__':

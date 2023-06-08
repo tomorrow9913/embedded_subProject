@@ -5,7 +5,7 @@ import numpy as np
 import tkinter as tk
 from PIL import Image, ImageTk
 from myPCA import *
-
+from event import *
 
 DATA_PATH = 'SSD_data'
 IMG_PATH = 'images'
@@ -138,30 +138,37 @@ class FaceCaptureFrame(tk.Frame):
         # self.after(1000, self.pack)
 
 def check(test_image):
-    test_image = np.array(test_image, np.float32)
-    image = test_image - average
-    image = image.reshape(18000, 1)
-    image_value = transform.T @ image
+    score = []
+    for i in range(4):
+        pca = pca_array[i]
+        test_image = np.array(test_image, np.float32)
+        image = test_image - average[i]
+        image = image.reshape(18000, 1)
+        image_value = transform[i].T @ image
 
-    min_array = 0
-    min_number = 0
+        x = 0
+        for j in range(count[i], count[i] + 10):
+            arr = pca[:, x].reshape(index[i], 1)
+            sum = 0
 
-    for i in range(count):
-        arr = pca_array[:, i].reshape(index, 1)
-        sum = 0
+            for k in range(index[i]):
+                sum += (image_value[k, 0] - arr[k, 0]) ** 2
 
-        for j in range(index):
-            sum += (image_value[j, 0] - arr[j, 0]) ** 2
+            sum **= 1 / 2
 
-        sum **= 1 / 2
+            if j % 10 == 0 or min_array > sum:
+                min_array = sum
+                min_number = j
+            x += 1
+        print(f"{min_number} {min_array}")
+        score.append(min_array)
+    print(score)
+    count = 0
+    for i in range(4):
+        if 1500 < score[0]: count += 1
 
-        if i == 0 or min_array > sum:
-            min_array = sum
-            min_number = i
-
-    print(f"{min_number} {min_array}")
-
-    
+    if count > 1: success()
+    else: fail()
 
 def gui():
     window = tk.Tk()
@@ -188,14 +195,24 @@ def main():
 
 
 if __name__ == '__main__':
-    average = cv2.imread("./train_file/average.jpg", cv2.IMREAD_GRAYSCALE)
-    difference = cv2.imread("./train_file/difference.jpg", cv2.IMREAD_GRAYSCALE)
+    average = []
+    difference = []
+    index = []
+    count = []
+    transform = []
+    pca_array = []
 
-    with open("./train_file/index.txt", "r") as f:
-        index, count = tuple(map(int, f.read().split(',')))
+    for i in range(4):
+        average.append(cv2.imread(f"./train_file/average{i}.jpg", cv2.IMREAD_GRAYSCALE))
+        difference.append(cv2.imread(f"./train_file/difference{i}.jpg", cv2.IMREAD_GRAYSCALE))
 
-    transform = np.load("./train_file/transform.npy")
-    pca_array = np.load("./train_file/pca_array.npy")
+        with open(f"./train_file/index{i}.txt", "r") as f:
+            idx, cut = tuple(map(int, f.read().split(',')))
+            index.append(idx)
+            count.append(cut)
+
+        transform.append(np.load(f"./train_file/transform{i}.npy"))
+        pca_array.append(np.load(f"./train_file/pca_array{i}.npy"))
 
     
     print('average')
